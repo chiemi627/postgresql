@@ -195,21 +195,23 @@ when 'rhel', 'fedora', 'suse'
   default['postgresql']['config']['log_rotation_age'] = '1d'
   default['postgresql']['config']['log_rotation_size'] = 0
   default['postgresql']['config']['datestyle'] = 'iso, mdy'
-  default['postgresql']['config']['lc_messages'] = 'en_US.UTF-8'
-  default['postgresql']['config']['lc_monetary'] = 'en_US.UTF-8'
-  default['postgresql']['config']['lc_numeric'] = 'en_US.UTF-8'
-  default['postgresql']['config']['lc_time'] = 'en_US.UTF-8'
+  default['postgresql']['config']['lc_messages'] = 'ja_JP.UTF-8'
+  default['postgresql']['config']['lc_monetary'] = 'ja_JP.UTF-8'
+  default['postgresql']['config']['lc_numeric'] = 'ja_JP.UTF-8'
+  default['postgresql']['config']['lc_time'] = 'ja_JP.UTF-8'
   default['postgresql']['config']['default_text_search_config'] = 'pg_catalog.english'
 end
 
 default['postgresql']['pg_hba'] = [
-  {:type => 'local', :db => 'all', :user => 'postgres', :addr => nil, :method => 'ident'},
-  {:type => 'local', :db => 'all', :user => 'all', :addr => nil, :method => 'ident'},
-  {:type => 'host', :db => 'all', :user => 'all', :addr => '127.0.0.1/32', :method => 'md5'},
-  {:type => 'host', :db => 'all', :user => 'all', :addr => '::1/128', :method => 'md5'}
+  {:type => 'local', :db => 'all', :user => 'postgres', :addr => nil, :method => 'trust'},
+  {:type => 'local', :db => 'all', :user => 'all', :addr => nil, :method => 'trust'},
+  {:type => 'host', :db => 'all', :user => 'all', :addr => '127.0.0.1/32', :method => 'trust'},
+  {:type => 'host', :db => 'all', :user => 'all', :addr => '::1/128', :method => 'trust'}
 ]
 
 default['postgresql']['password'] = Hash.new
+default['postgresql']['password']['postgres'] = "md5cae31bc247ad84a02394a8b12ff92d76" #hogehoge
+#default['postgresql']['password']['postgres'] = "md53175bce1d3201d16594cebf9d7eb3f9d"
 
 case node['platform_family']
 when 'debian'
@@ -218,7 +220,7 @@ end
 
 default['postgresql']['enable_pgdg_yum'] = false
 
-default['postgresql']['initdb_locale'] = nil
+default['postgresql']['initdb_locale'] = 'ja_JP.UTF-8'
 
 # The PostgreSQL RPM Building Project built repository RPMs for easy
 # access to the PGDG yum repositories. Links to RPMs for installation
@@ -239,6 +241,19 @@ default['postgresql']['pgdg']['repo_rpm_url'] = {
       "7" => {
         "x86_64" => "http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-redhat94-9.4-1.noarch.rpm"
       }
+    },
+    "centos" => {
+	"7" => {
+	   "x86_64" => "http://yum.postgresql.org/9.4/redhat/rhel-7-x86_64/pgdg-centos94-9.4-1.noarch.rpm"
+	},
+	"6" => {
+	   "i386" => "http://yum.postgresql.org/9.4/redhat/rhel-6-i386/pgdg-centos94-9.4-1.noarch.rpm",
+	   "x86_64" => "http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm"
+	},
+	"5" => {
+	  "i386" => "http://yum.postgresql.org/9.4/redhat/rhel-5-i386/pgdg-centos94-9.4-1.noarch.rpm",
+          "x86_64" => "http://yum.postgresql.org/9.4/redhat/rhel-5-x86_64/pgdg-centos94-9.4-1.noarch.rpm"
+	}
     }
   },
   "9.3" => {

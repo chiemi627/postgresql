@@ -29,6 +29,11 @@ rescue LoadError
     e.run_action(:run) unless ::File.exists?('/var/lib/apt/periodic/update-success-stamp')
   end
 
+  %w{automake gcc make}.each do |pkg|
+    package(pkg).run_action(:install)
+  end
+
+
   node.set['build-essential']['compile_time'] = true
   include_recipe "build-essential"
   include_recipe "postgresql::client"

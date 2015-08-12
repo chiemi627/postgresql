@@ -104,10 +104,16 @@ when "amazon"
 
 when "redhat", "centos", "scientific", "oracle"
 
-  default['postgresql']['version'] = "8.4"
+  case
+  when node['platform_version'].to_f < 7.0
+    default['postgresql']['version'] = "8.4"
+  when node['platform_version'].to_f < 8.0
+    default['postgresql']['version'] = "9.2"    
+  end
+  
   default['postgresql']['dir'] = "/var/lib/pgsql/data"
 
-  if node['platform_version'].to_f >= 6.0 && node['postgresql']['version'] == '8.4'
+  if node['platform_version'].to_f >= 6.0 && node['postgresql']['version'].to_f >= 8.4
     default['postgresql']['client']['packages'] = %w{postgresql-devel}
     default['postgresql']['server']['packages'] = %w{postgresql-server}
     default['postgresql']['contrib']['packages'] = %w{postgresql-contrib}
@@ -117,7 +123,7 @@ when "redhat", "centos", "scientific", "oracle"
     default['postgresql']['contrib']['packages'] = ["postgresql#{node['postgresql']['version'].split('.').join}-contrib"]
   end
 
-  if node['platform_version'].to_f >= 6.0 && node['postgresql']['version'] != '8.4'
+  if node['platform_version'].to_f >= 6.0 && node['postgresql']['version'].to_f < 8.4
      default['postgresql']['dir'] = "/var/lib/pgsql/#{node['postgresql']['version']}/data"
      default['postgresql']['server']['service_name'] = "postgresql-#{node['postgresql']['version']}"
   else
